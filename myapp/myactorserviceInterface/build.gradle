@@ -1,0 +1,27 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+     java.srcDirs = ['src']
+     output.classesDir = 'out/classes'
+      resources {
+       srcDirs = ['src']
+     }
+   }
+}
+
+dependencies {
+    compile fileTree(dir: "/opt/microsoft/sdk/servicefabric/java/packages/lib", include: ['*.jar'])
+}
+
+clean.doFirst {
+	delete "${rootDir}/out"
+}
+
+jar {
+	baseName 'myactorservice-interface'
+    destinationDir = file('out/lib')
+}
+
+defaultTasks 'clean', 'jar'

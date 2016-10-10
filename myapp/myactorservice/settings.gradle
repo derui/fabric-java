@@ -1,0 +1,3 @@
+include ':myactorserviceInterface'
+
+project(':myactorserviceInterface').projectDir = new File(settingsDir, '../myactorserviceInterface')

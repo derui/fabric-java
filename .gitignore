@@ -1,0 +1,7 @@
+/.vagrant
+*.jar
+
+build/
+out/
+lib/
+.gradle/

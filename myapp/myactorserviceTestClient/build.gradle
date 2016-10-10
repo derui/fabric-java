@@ -1,0 +1,58 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+	java.srcDirs = ['src']
+    output.classesDir = 'out/classes'
+    resources {
+		srcDirs = ['src']
+    }
+   }
+}
+
+dependencies {
+    compile fileTree(dir: "/opt/microsoft/sdk/servicefabric/java/packages/lib", include: ['*.jar'])
+	compile project(':myactorserviceInterface')    
+}
+
+clean.doFirst {
+    println "Cleaning"
+	delete "${rootDir}/out"
+}
+
+jar 
+{
+	manifest {
+    attributes(
+		'Main-Class': 'reliableactor.test.myactorserviceTestClient',
+		"Class-Path": configurations.compile.collect { 'lib/' + it.getName() }.join(' '))
+	baseName "myactorservice-test"
+    destinationDir = file('./out/lib')
+	}
+}
+
+task copyDeps<< {
+        copy {
+                from("/opt/microsoft/sdk/servicefabric/java/packages/lib")
+                into("./out/lib/lib")
+                include('*.jar')
+        }
+        copy {
+                from("/opt/microsoft/sdk/servicefabric/java/packages/lib")
+                into("./out/lib/lib")
+                include('*.so')
+        }
+        copy {
+                from("/opt/microsoft/sdk/servicefabric/java/packages/lib")
+                into("./out/lib/lib")
+                include('*.dll')
+        }
+        copy {
+                from("../myactorserviceInterface/out/lib")
+                into("./out/lib/lib")
+                include('*.jar')
+        }
+}
+
+defaultTasks 'clean', 'jar', 'copyDeps'
