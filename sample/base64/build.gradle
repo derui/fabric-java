@@ -1,0 +1,69 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceSets {
+  main {
+     java.srcDirs = ['src']
+     output.classesDir = 'out/classes'
+      resources {
+       srcDirs = ['src']
+     }
+   }
+}
+
+def sfsdkdir = "../../servicefabricsdk"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.eclipse.jetty:jetty-server:9.3.14.v20161028'
+    compile 'org.eclipse.jetty:jetty-webapp:9.3.14.v20161028'
+    
+    compile fileTree(dir: sfsdkdir, include: ['*.jar'])
+}
+
+clean.doFirst {
+	delete "${rootDir}/out"
+}
+
+jar {
+	manifest {
+    attributes(
+		'Main-Class': 'statelessservice.base64ServiceHost',
+		"Class-Path": configurations.compile.collect { 'lib/' + it.getName() }.join(' '))
+	baseName "base64"
+    destinationDir = file('../sample/base64Pkg/Code/')
+    }
+}
+
+task copyDeps<< {
+    copy {
+        from(configurations.compile)
+	    into("../sample/base64Pkg/Code/lib")
+        include('*.jar')
+    }
+	copy {
+		from(sfsdkdir)
+		into("../sample/base64Pkg/Code/lib")
+		include('*.jar')
+	}
+	copy {
+		from(sfsdkdir)
+		into("../sample/base64Pkg/Code/lib")
+		include('*.so')
+	}
+	copy {
+		from(sfsdkdir)
+		into("../sample/base64Pkg/Code/lib")
+		include('*.dll')
+	}
+}
+
+
+defaultTasks 'clean', 'jar', 'copyDeps'
+
+
+
+
